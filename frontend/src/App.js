@@ -15,7 +15,7 @@ function App() {
     const response = await axios.post("http://localhost:8080/compare", body)
     // const {user1Repos, user2Repos} = response.data
     console.log(response.data)
-    const cards = response.data.map((userData, index) => (<Card key={index} languageDict={userData.languageDict} user={userData.user} repos={userData.repoCount} bytes={userData.totalBytes} issues={userData.openIssues}/>))
+    const cards = response.data.map((userData, index) => (<Card key={index} prs={userData.prs} commits={userData.commits} stars={userData.stars} languageDict={userData.languageDict} user={userData.user} repos={userData.repoCount} bytes={userData.totalBytes} issues={userData.openIssues}/>))
     console.log(cards)
     setUserCards(cards)
 

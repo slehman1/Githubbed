@@ -47,13 +47,17 @@ app.post("/compare", async (req, res) => {
             'X-GitHub-Api-Version': '2022-11-28'
         }
     })
+    // console.log(user1Repos)
+    var user1stars = 0
     var user1OpenIssues = 0
     var user1TotalBytes = 0
     user1Repos.data.forEach((repo) => {
         const openIssue = repo.open_issues
         const bytes = repo.size
+        const stars = repo.stargazers_count
         user1OpenIssues += openIssue
         user1TotalBytes += bytes
+        user1stars += stars
     })
 
     const user2Repos = await octokit.request("GET /users/{username}/repos", {
@@ -62,13 +66,16 @@ app.post("/compare", async (req, res) => {
             'X-GitHub-Api-Version': '2022-11-28'
         }
     })
+    var user2stars = 0
     var user2OpenIssues = 0
     var user2TotalBytes = 0
     user2Repos.data.forEach((repo) => {
         const openIssue = repo.open_issues
         const bytes = repo.size
+        const stars = repo.stargazers_count
         user2OpenIssues += openIssue
         user2TotalBytes += bytes
+        user2stars += stars
     })
     //calculate languages
     const languageDict1 = {}
@@ -109,11 +116,67 @@ app.post("/compare", async (req, res) => {
             }
         }
     }
+    //calculate commits
+    var user1commits = 0
+    var user2commits = 0
+    for (let i = 0; i < user1Repos.data.length; i++){
+        const repoName = user1Repos.data[i].name
+        const user1commitsResponse = await octokit.request('GET /repos/{owner}/{repo}/commits?author={owner}', {
+            owner: user1,
+            repo: repoName,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        })
+        user1commits += user1commitsResponse.data.length
+    }
+    for (let i = 0; i < user2Repos.data.length; i++){
+        const repoName = user2Repos.data[i].name
+        const user2commitsResponse = await octokit.request('GET /repos/{owner}/{repo}/commits?author={owner}', {
+            owner: user2,
+            repo: repoName,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        })
+        user2commits += user2commitsResponse.data.length
+    }
+    //calculate pulls
+    var user1PullRequests = 0
+    var user2PullRequests = 0
+    for (let i = 0; i < user1Repos.data.length; i++){
+        const repoName = user1Repos.data[i].name
+        const user1PullsResponse = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+            owner: user1,
+            repo: repoName,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        })
+        user1PullRequests += user1PullsResponse.data.length
+    }
+    for (let i = 0; i < user2Repos.data.length; i++){
+        const repoName = user2Repos.data[i].name
+        const user2PullsResponse = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+            owner: user2,
+            repo: repoName,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        })
+        user2PullRequests += user2PullsResponse.data.length
+    }
+
+      
+
     
     
     const resData = []
     const user1Data = {
         user: user1,
+        stars: user1stars,
+        commits: user1commits,
+        prs: user1PullRequests,
         repoCount: gitResponse1.data.public_repos,
         openIssues: user1OpenIssues,
         totalBytes: user1TotalBytes,
@@ -121,6 +184,9 @@ app.post("/compare", async (req, res) => {
     }
     const user2Data = {
         user: user2,
+        stars: user2stars,
+        commits: user2commits,
+        prs: user2PullRequests,
         repoCount: gitResponse2.data.public_repos,
         openIssues: user2OpenIssues,
         totalBytes: user2TotalBytes,
@@ -128,9 +194,18 @@ app.post("/compare", async (req, res) => {
     }
     resData.push(user1Data)
     resData.push(user2Data)
-    console.log(resData)
-    
     res.json(resData)
+
+    // const tester = await octokit.request('GET /repos/{owner}/{repo}', {
+    //     owner: user1,
+    //     repo: "Githubbed",
+    //     headers: {
+    //       'X-GitHub-Api-Version': '2022-11-28'
+    //     }
+    // })
+
+    // console.log(tester)
+
 })
 
 app.listen(port, () => {
