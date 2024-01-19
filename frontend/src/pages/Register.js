@@ -1,6 +1,7 @@
 import React from "react"
 import axios from "axios"
 import Card from "../components/Card"
+import { useNavigate } from "react-router-dom";
 
 function Login() {
 
@@ -8,20 +9,29 @@ function Login() {
   const [password1, setPassword1] = React.useState("")
   const [password2, setPassword2] = React.useState("")
   const [loaderFlag, setLoaderFlag] = React.useState(false)
+  const navigate = useNavigate();
 
 
   async function handleForm(e){
     e.preventDefault()
-    setLoaderFlag(true)
     if (password1 !== password2){
         alert("passwords don't match dummy")
     } else if (password1.length < 5){
         alert("password is too short dummy")
     }
-    
-    setLoaderFlag(false)
+    setLoaderFlag(true)
+    const body = {username: username, password: password1}
+    const response = await axios.post("http://localhost:8080/register", body)
+    console.log(response)
+    if (response.data === "Success"){
+      navigate("/")
+    } else if (response.data === "Username") {
+      alert("Username already in use")
+    } else {
+      alert("Error")
+    }
 
-    
+    setLoaderFlag(false)
   }
 
 

@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors"
 import { Octokit } from "octokit";
 import 'dotenv/config';
+import bcrypt from "bcrypt"
+import { createClient } from '@supabase/supabase-js'
 
 
 // maybe you can do some sort of stats comparison app? or leaderboard or something?
@@ -14,9 +16,18 @@ import 'dotenv/config';
 const port = 8080
 const app = express()
 
-//
+//octokit simplifies github api calls
 const octokit = new Octokit({ auth: process.env.AUTH_KEY });
 
+
+//supabase db server hosting
+const supabaseUrl = 'https://btsemxwskradoknjgqau.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+
+  
+  
 
 
 app.use(cors())
@@ -294,6 +305,60 @@ app.post("/repoInfo", async (req, res) => {
 
     
     res.json(resData)
+})
+
+app.post("/login", async (req, res) => {
+    const {username, password} = req.body
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select()
+            .eq('username', username)
+
+        bcrypt.compare(password, data[0].hashed_password, function(err, result) {
+        if (result) {
+            res.send(`${data[0].id}`)
+        } else {
+            res.send("Wrong")
+        }
+    });
+    } catch {
+        res.send("None")
+    }
+    
+
+    
+})
+
+
+app.post("/register", async (req, res) => {
+    const {username, password} = req.body
+    //check if username already in use
+    const { data, error } = await supabase
+        .from('users')
+        .select()
+        .eq('username', username)
+    if (data.length > 0) {
+        res.send("Username")
+    } else {
+        //hash password with bcrypt
+        const saltRounds = 10
+        bcrypt.genSalt(saltRounds, async function(err, salt) {
+            bcrypt.hash(password, salt, async function(err, hash) {
+                const { error } = await supabase
+                    .from('users')
+                    .insert({ username: username, hashed_password: hash })
+                    console.log(error)
+                    if (error) {
+                        res.send("Error")
+                    } else {
+                        res.send("Success")
+                    }
+            });
+        });  
+    }
+
+    
 })
 
 app.listen(port, () => {
