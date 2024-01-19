@@ -26,20 +26,20 @@ app.use(express.urlencoded({ extended: true }))
 app.post("/compare", async (req, res) => {
     const {user1, user2} = req.body
     //get user info
-    const gitResponse1 = await octokit.request('GET /users/{username}', {
-        username: user1,
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-    })
-    
-    
-    const gitResponse2 = await octokit.request('GET /users/{username}', {
-        username: user2,
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-    })
+    // const gitResponse1 = await octokit.request('GET /users/{username}', {
+    //     username: user1,
+    //     headers: {
+    //       'X-GitHub-Api-Version': '2022-11-28'
+    //     }
+    // })
+    // const gitResponse2 = await octokit.request('GET /users/{username}', {
+    //     username: user2,
+    //     headers: {
+    //       'X-GitHub-Api-Version': '2022-11-28'
+    //     }
+    // })
+
+
     //get all their repositories
     const user1Repos = await octokit.request("GET /users/{username}/repos", {
         username: user1,
@@ -177,7 +177,7 @@ app.post("/compare", async (req, res) => {
         stars: user1stars,
         commits: user1commits,
         prs: user1PullRequests,
-        repoCount: gitResponse1.data.public_repos,
+        repoCount: user1Repos.data.length,
         openIssues: user1OpenIssues,
         totalBytes: user1TotalBytes,
         languageDict: languageDict1,
@@ -187,7 +187,7 @@ app.post("/compare", async (req, res) => {
         stars: user2stars,
         commits: user2commits,
         prs: user2PullRequests,
-        repoCount: gitResponse2.data.public_repos,
+        repoCount: user2Repos.data.length,
         openIssues: user2OpenIssues,
         totalBytes: user2TotalBytes,
         languageDict: languageDict2,
@@ -206,6 +206,94 @@ app.post("/compare", async (req, res) => {
 
     // console.log(tester)
 
+})
+
+
+app.post("/repos", async (req, res) => {
+    const user = req.body.user1
+    console.log(user)
+    const user1Repos = await octokit.request("GET /users/{username}/repos", {
+        username: user,
+        headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+    })
+    const resData = []
+    user1Repos.data.forEach(repo => {
+        resData.push(repo.name)
+    })
+    res.json(resData)
+})
+
+app.post("/repoInfo", async (req, res) => {
+    const {user1, repo} = req.body
+    //get bytes per language
+    const repoLanguages = await octokit.request('GET /repos/{owner}/{repo}/languages', {
+        owner: user1,
+        repo: repo,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+    })
+    
+    //get all commmits and then get lines added and deleted per commit
+    const userCommits = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+        owner: user1,
+        repo: repo,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+    })
+    const commitShas = []
+    userCommits.data.forEach((commit) => {
+        commitShas.push(commit.sha)
+    })
+    var currLines = 0
+    const linesArray = []
+    var z = 0
+    for (let i = commitShas.length - 1; i > -1; i--){
+        z += 1
+        const currSha = commitShas[i]
+        const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{sha}', {
+            owner: user1,
+            repo: repo,
+            sha: currSha,
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28'
+            }
+        })
+        const change = response.data.stats.additions - response.data.stats.deletions
+        if (i === commitShas.length - 1){
+            linesArray.push(change)
+        } else {
+            const prevLines = linesArray[z - 2]
+            const newTotal = prevLines + change
+            linesArray.push(newTotal)
+        }
+    }
+
+    const repoInfoResponse = await octokit.request('GET /repos/{owner}/{repo}', {
+        owner: user1,
+        repo: repo,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+    })
+
+    const repoInfo = {
+        forks: repoInfoResponse.data.forks,
+        stars: repoInfoResponse.data.stargazers_count,
+        openIssues: repoInfoResponse.data.open_issues,
+    }
+
+    const resData = {
+        languages: repoLanguages.data,
+        lineNums: linesArray,
+        info: repoInfo
+    }
+
+    
+    res.json(resData)
 })
 
 app.listen(port, () => {

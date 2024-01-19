@@ -6,7 +6,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 
 function PieChart(props) {
-  console.log(props.languages)
+  
 
     const labels = []
     const dataz = []
@@ -14,9 +14,7 @@ function PieChart(props) {
       labels.push(key)
       dataz.push(props.languages[key])
     }
-    console.log(labels)
-    console.log(dataz)
-
+    
     const data = {
         labels: labels,
         datasets: [
