@@ -6,8 +6,18 @@ function Layout() {
         <>
         <nav className="navbar">
           <ul>
+          <li>
+              <Link to="/">Login</Link>
+            </li>
+            
             <li>
-              <Link to="/">Compare</Link>
+              <Link to="/register">Register</Link>
+            </li>
+            <li>
+              <Link to="/account">Account</Link>
+            </li>
+            <li>
+              <Link to="/compare">Compare</Link>
             </li>
             <li>
               <Link to="/repoStats">Repo Stats</Link>
