@@ -42,7 +42,6 @@ app.post("/compare", async (req, res) => {
 })
 
 app.post("/user", async (req, res) => {
-    console.log("here")
     const {username} = req.body
     const userz1Data = await userStats(username)
     res.json(userz1Data)
@@ -68,6 +67,7 @@ app.post("/repos", async (req, res) => {
 
 app.post("/repoInfo", async (req, res) => {
     const {user1, repo} = req.body
+    console.log(user1, repo)
     //get bytes per language
     const repoLanguages = await octokit.request('GET /repos/{owner}/{repo}/languages', {
         owner: user1,
@@ -204,8 +204,6 @@ async function userStats(username){
             'X-GitHub-Api-Version': '2022-11-28'
         }
     })
-    console.log("testing")
-    console.log(user1Repos)
     var user1stars = 0
     var user1OpenIssues = 0
     var user1TotalBytes = 0

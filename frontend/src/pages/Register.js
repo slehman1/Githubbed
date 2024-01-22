@@ -2,7 +2,7 @@ import React from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Register(props) {
 
   const [username, setUser1] = React.useState("")
   const [password1, setPassword1] = React.useState("")
@@ -15,12 +15,13 @@ function Login() {
     e.preventDefault()
     if (password1 !== password2){
         alert("passwords don't match dummy")
+        return
     } else if (password1.length < 5){
         alert("password is too short dummy")
     }
     setLoaderFlag(true)
     const body = {username: username, password: password1}
-    const response = await axios.post("https://githubber-backend.vercel.app/register", body)
+    const response = await axios.post("http://localhost:8080/register", body)
     console.log(response)
     if (response.data === "Success"){
       navigate("/")
@@ -52,4 +53,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

@@ -3,9 +3,11 @@ import axios from "axios"
 import Cookies from "js-cookie"
 import Card from "../components/Card"
 
-function Account() {
+//vercel: https://githubber-backend.vercel.app
 
+function Account(props) {
 
+  
   const [card, setCard] = React.useState()
   const [usernameName, setUsernameName] = React.useState()
   const [loaderFlag, setLoaderFlag] = React.useState(false)
@@ -16,7 +18,7 @@ function Account() {
       const username = Cookies.get("username")
       setUsernameName(username)
       const body = {username: username}
-      const response = await axios.post("https://githubber-backend.vercel.app/user", body)
+      const response = await axios.post("http://localhost:8080/user", body)
       const userData = response.data
       const newCard = <Card prs={userData.prs} commits={userData.commits} stars={userData.stars} languageDict={userData.languageDict} user={userData.user} repos={userData.repoCount} bytes={userData.totalBytes} issues={userData.openIssues}/>
       setCard(newCard)
@@ -30,7 +32,7 @@ function Account() {
 
 
   return (
-    <div>
+    <div >
       <h1>Account</h1>
       <h2>Hello {usernameName}</h2>
       <p>Lots of interesting information</p>

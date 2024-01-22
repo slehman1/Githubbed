@@ -11,16 +11,26 @@ import Account from "../pages/Account.js";
 
 function App() {
 
+  const [isLoggedIn, setIsLoggedIn] = React.useState()
+  const [darkMode, setDarkMode] = React.useState(false)
+  console.log(darkMode)
+  
+  if (darkMode) {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
+  }
+  
   
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="account" element={<Account />} />
-          <Route path="compare" element={<Compare />} />
-          <Route path="repoStats" element={<RepoStats />} />
+        <Route path="/" element={<Layout setDarkMode={setDarkMode} darkMode={darkMode} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />}>
+          <Route index element={<Login darkMode={darkMode}  setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="register" element={<Register darkMode={darkMode}  />} />
+          <Route path="account" element={<Account darkMode={darkMode} />} />
+          <Route path="compare" element={<Compare darkMode={darkMode} />} />
+          <Route path="repoStats" element={<RepoStats darkMode={darkMode} />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

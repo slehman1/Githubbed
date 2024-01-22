@@ -32,6 +32,26 @@ a:hover {
   flex-direction: row;
 }
 
+#repo-name-title {
+  margin: 10px;
+}
+
+
+
+.logout-button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-size: 1.02rem;
+}
+
+.logout-button:hover {
+  color: blue;
+}
+
 
 
 /* HTML: <div class="loader"></div> */
@@ -53,6 +73,7 @@ a:hover {
   left: 50%;
   margin-top: 20px;
   animation: l9-0 2s infinite;
+  background-color: gray;
 }
 .loader::before {
   content:"Loading";
@@ -83,4 +104,18 @@ a:hover {
   50%   { background-position:bottom, bottom 10px left 0,bottom 3px left 0,bottom 0 left 50%;left:calc(100% - 22px)}
   75%   { background-position:bottom, bottom 54px left 0,bottom 3px left 0,bottom 0 left 50%;left:calc(100% - 22px)}
   75.1% { background-position:bottom, bottom 10px left 0,bottom 3px left 0,bottom 0 left 50%;left:calc(100% - 22px)}
+}
+
+.dark-mode {
+  background-color: black;
+  color: white;
+}
+
+
+.dark-mode .logout-button, a {
+  color: white;
+}
+
+.dark-mode .logout-button:hover, a:hover {
+  color: yellow;
 }
