@@ -1,6 +1,7 @@
 import React from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function Login() {
 
@@ -13,7 +14,7 @@ function Login() {
     e.preventDefault()
     setLoaderFlag(true)
     const body = {username: username, password: password}
-    const response = await axios.post("http://localhost:8080/login", body)
+    const response = await axios.post("https://githubber-backend.vercel.app/login", body)
     
     if (response.data === "None") {
       alert("Couldn't find username")
@@ -21,7 +22,8 @@ function Login() {
       alert("Incorrect password")
     } else {
       //setup cookie
-      console.log(response.data)
+      Cookies.set("session", response.data.id)
+      Cookies.set("username", response.data.username)
       navigate("/account")
     }
     setLoaderFlag(false)
@@ -29,7 +31,7 @@ function Login() {
 
   return (
     <div>
-      <h1>Githubbed</h1>
+      <h1>Login</h1>
       <p>Pls login</p>
       <form onSubmit={handleForm}>
       <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />

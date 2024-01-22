@@ -7,6 +7,9 @@ function Layout() {
         <nav className="navbar">
           <ul>
           <li>
+              <h1>Githubbed</h1>
+          </li>
+          <li>
               <Link to="/">Login</Link>
             </li>
             

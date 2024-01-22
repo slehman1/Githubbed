@@ -1,6 +1,5 @@
 import React from "react"
 import axios from "axios"
-import Card from "../components/Card"
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -21,7 +20,7 @@ function Login() {
     }
     setLoaderFlag(true)
     const body = {username: username, password: password1}
-    const response = await axios.post("http://localhost:8080/register", body)
+    const response = await axios.post("https://githubber-backend.vercel.app/register", body)
     console.log(response)
     if (response.data === "Success"){
       navigate("/")
@@ -40,7 +39,7 @@ function Login() {
 
   return (
     <div>
-      <h1>Githubbed</h1>
+      <h1>Register</h1>
       <p>Pls register</p>
       <form onSubmit={handleForm}>
       <input type="text" placeholder="Username" value={username} onChange={(e) => setUser1(e.target.value)} />

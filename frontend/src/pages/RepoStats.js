@@ -20,7 +20,7 @@ function RepoStats() {
   async function handleUserForm(e){
     e.preventDefault()
     const body = {user1: user1}
-    const response = await axios.post("http://localhost:8080/repos", body)
+    const response = await axios.post("https://githubber-backend.vercel.app/repos", body)
     // const {user1Repos, user2Repos} = response.data
     console.log(response.data)
     const newRepoSelector = response.data.map((repo, index) => (
@@ -33,7 +33,8 @@ function RepoStats() {
     setLoaderFlag(true)
     e.preventDefault()
     const body = {user1: user1, repo: repo}
-    const response = await axios.post("http://localhost:8080/repoInfo", body)
+    console.log(user1, repo)
+    const response = await axios.post("https://githubber-backend.vercel.app/repoInfo", body)
     console.log(response.data)
     setRepoPie(<PieChart languages={response.data.languages} />)
     setRepoLineChart(<LineChart lines={response.data.lineNums} />)
@@ -51,7 +52,7 @@ function RepoStats() {
 
   return (
     <div>
-      <h1>Githubbed</h1>
+      <h1>Repo Stats</h1>
       <p>Pls input a user to see public repos</p>
       <form onSubmit={handleUserForm}>
       <input type="text" placeholder="User" value={user1} onChange={(e) => setUser1(e.target.value)} />
