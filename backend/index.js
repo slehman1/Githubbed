@@ -57,14 +57,14 @@ app.post("/repos", async (req, res) => {
         return
     }
     
-    console.log("user", user)
+    
     const user1Repos = await octokit.request("GET /users/{username}/repos", {
         username: user,
         headers: {
             'X-GitHub-Api-Version': '2022-11-28'
         }
     })
-    console.log(user1Repos.data)
+    
     const resData = []
     user1Repos.data.forEach(repo => {
         resData.push(repo.name)

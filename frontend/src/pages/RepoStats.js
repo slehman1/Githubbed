@@ -20,18 +20,24 @@ function RepoStats() {
   const [repoLineChart, setRepoLineChart] = React.useState()
   const [loaderFlag, setLoaderFlag] = React.useState(false)
   const [wrongUsernameFlag, setWrongUsernameFlag] = React.useState(false)
+  const [noReposFlag, setNoReposFlag] = React.useState(false)
   
 
   const debounceOnChange = React.useCallback(debounce(onChange, 800), []);
 
   async function onChange(value) {
     setWrongUsernameFlag(false)
+    setNoReposFlag(false)
     const body = {user1: value}
     setUser1(value)
     setLoaderFlag(true)
-    const response = await axios.post("http://localhost:8080/repos", body)
+    const response = await axios.post("https://githubber-backend.vercel.app/repos", body)
     if (response.data === "Error") {
       setWrongUsernameFlag(true)
+      setLoaderFlag(false)
+      return
+    } else if (response.data.length === 0){
+      setNoReposFlag(true)
       setLoaderFlag(false)
       return
     }
@@ -43,20 +49,6 @@ function RepoStats() {
     setLoaderFlag(false)
   }
 
-
-//https://githubber-backend.vercel.app/repos
-
-  async function handleUserForm(e){
-    e.preventDefault()
-    const body = {user1: user1}
-    const response = await axios.post("http://localhost:8080/repos", body)
-    // const {user1Repos, user2Repos} = response.data
-    console.log(response.data)
-    const newRepoSelector = response.data.map((repo, index) => (
-        <option key={index} value={repo}>{repo}</option>
-    ))
-    setRepoSelector(newRepoSelector)
-  }
 
   async function handleRepoForm(e){
     e.preventDefault()
@@ -86,17 +78,17 @@ function RepoStats() {
   return (
     <Row>
     <Container>
-    <div>
       <h1>Repo Stats</h1>
       <p>Pls input a user to see public repos</p>
 
-      <Form onSubmit={handleUserForm}>
+      <Form>
         <Form.Group className="mb-3">
           <Form.Label>Github Username</Form.Label>
           <Form.Control type="text" placeholder="Username"  onChange={e => debounceOnChange(e.target.value)} />
         </Form.Group>
       </Form>
       {wrongUsernameFlag && <Alert variant="danger">Invalid username dummy!</Alert>}
+      {noReposFlag && <Alert variant="danger">No repos for this username!</Alert>}
 
       <Form onSubmit={handleRepoForm}>
         <Form.Group className="mb-3">
@@ -129,7 +121,7 @@ function RepoStats() {
         {repoInfo}
         </div>
       </div>
-    </div>
+
     </Container>
     </Row>
   );
