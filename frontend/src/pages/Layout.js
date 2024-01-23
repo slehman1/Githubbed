@@ -1,60 +1,57 @@
 import React from "react"
-import { Outlet, Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { Outlet, Link } from "react-router-dom";
+
+//bootstrap imports
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+
 
 function Layout(props) {
   const isLoggedIn = props.isLoggedIn
+  const isDarkMode = props.darkMode
   const [loggedIn, setLoggedIn] = React.useState()
-  const navigate = useNavigate()
+  const [darkMode, setdarkMode] = React.useState()
 
   React.useEffect(() => {
     setLoggedIn(isLoggedIn)
   }, [isLoggedIn])
 
-
-  function handleLogout(){
-    Cookies.remove("isAuth")
-    Cookies.remove("session")
-    Cookies.remove("username")
-    props.setIsLoggedIn(false)
-    navigate("/")
-  }
-
-
-
-
-
+  React.useEffect(() => {
+    setdarkMode(isDarkMode)
+  }, [isDarkMode])
 
   return (
-      <div>
-      <nav className="navbar">
-        <ul>
-        <li>
-            <h1>Githubbed</h1>
-        </li>
-        {!loggedIn && <li><Link to="/">Login</Link></li>}
-        {loggedIn && <button className="logout-button" onClick={handleLogout}>Logout</button>}
-          <li>
-            <Link to="/register">Register</Link>
-          </li>
-          <li>
-            <Link to="/account">Account</Link>
-          </li>
-          <li>
-            <Link to="/compare">Compare</Link>
-          </li>
-          <li>
-            <Link to="/repoStats">Repo Stats</Link>
-          </li>
-          <li>
-          <button className="logout-button" onClick={()=> props.setDarkMode((prevDarkMode) => !prevDarkMode)}>Dark Mode Toggle</button>
-          </li>
-        </ul>
-      </nav>
+    <Container>
+    <Row>
+      <Navbar expand="lg" className="bg-body-tertiary">
+      <Container>
+        <Navbar.Brand>Githubbed</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+          {!loggedIn && <Link className="m-2" to="/">Login</Link>}
+          {loggedIn && <Link className="m-2" to="/logout">Logout</Link>}
+            <Link className="m-2" to="/register">Register</Link>
+            <Link className="m-2" to="/account">Account</Link>
+            <Link className="m-2" to="/compare">Compare</Link>
+            <Link className="m-2" to="/repoStats">Repo Stats</Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+      
+      {darkMode && <Button onClick={()=> props.setDarkMode((prevDarkMode) => !prevDarkMode)}>Light Mode</Button>}
+    {!darkMode && <Button onClick={()=> props.setDarkMode((prevDarkMode) => !prevDarkMode)}>Dark Mode</Button>}
+    </Navbar>
+    </Row>
+    <Row>
+    <Outlet />
+    </Row>
+    </Container>
 
-      <Outlet />
-    </div>
-    
+
 
   )
 }

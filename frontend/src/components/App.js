@@ -7,30 +7,38 @@ import NoPage from "../pages/NoPage.js";
 import Login from "../pages/Login.js";
 import Register from "../pages/Register.js"
 import Account from "../pages/Account.js";
+import Logout from "../pages/Logout.js";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = React.useState()
   const [darkMode, setDarkMode] = React.useState(false)
-  console.log(darkMode)
   
-  if (darkMode) {
-    document.body.classList.add("dark-mode");
-  } else {
-    document.body.classList.remove("dark-mode");
+  React.useEffect(setBg, [darkMode])
+
+  function setBg() {
+    if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
+      document.documentElement.setAttribute('data-bs-theme','light')
+    }
+    else {
+        document.documentElement.setAttribute('data-bs-theme','dark')
+    }
   }
+  
   
   
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout setDarkMode={setDarkMode} darkMode={darkMode} setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn} />}>
-          <Route index element={<Login darkMode={darkMode}  setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="register" element={<Register darkMode={darkMode}  />} />
-          <Route path="account" element={<Account darkMode={darkMode} />} />
-          <Route path="compare" element={<Compare darkMode={darkMode} />} />
-          <Route path="repoStats" element={<RepoStats darkMode={darkMode} />} />
+          <Route index element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="logout" element={<Logout setIsLoggedIn={setIsLoggedIn}/>} />
+          <Route path="register" element={<Register />} />
+          <Route path="account" element={<Account />} />
+          <Route path="compare" element={<Compare />} />
+          <Route path="repoStats" element={<RepoStats/>} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

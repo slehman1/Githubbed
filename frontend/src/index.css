@@ -55,7 +55,6 @@ a:hover {
 
 
 /* HTML: <div class="loader"></div> */
-/* HTML: <div class="loader"></div> */
 .loader {
   width: fit-content;
   font-size: 17px;
@@ -112,10 +111,19 @@ a:hover {
 }
 
 
-.dark-mode .logout-button, a {
+.dark-mode .logout-button {
   color: white;
 }
 
-.dark-mode .logout-button:hover, a:hover {
+.dark-mode a {
+  color: white;
+
+}
+
+.dark-mode .logout-button:hover{
+  color: yellow;
+}
+
+.dark-mode a:hover {
   color: yellow;
 }

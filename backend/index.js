@@ -52,12 +52,19 @@ app.post("/user", async (req, res) => {
 app.post("/repos", async (req, res) => {
     //gets a list of repo names from the user
     const user = req.body.user1
+    if (user === ""){
+        res.json("Error")
+        return
+    }
+    
+    console.log("user", user)
     const user1Repos = await octokit.request("GET /users/{username}/repos", {
         username: user,
         headers: {
             'X-GitHub-Api-Version': '2022-11-28'
         }
     })
+    console.log(user1Repos.data)
     const resData = []
     user1Repos.data.forEach(repo => {
         resData.push(repo.name)
@@ -67,7 +74,7 @@ app.post("/repos", async (req, res) => {
 
 app.post("/repoInfo", async (req, res) => {
     const {user1, repo} = req.body
-    console.log(user1, repo)
+    
     //get bytes per language
     const repoLanguages = await octokit.request('GET /repos/{owner}/{repo}/languages', {
         owner: user1,
