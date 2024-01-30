@@ -3,7 +3,7 @@ import axios from "axios"
 import Card from "../components/Card"
 
 //bootstrap imports
-import {Spinner, Form, Button} from "react-bootstrap"
+import {Spinner, Form, Button, Container} from "react-bootstrap"
 
 function App() {
 
@@ -38,10 +38,8 @@ function App() {
       <p>Pls input two valid Github users to compare stats</p>
       <Form onSubmit={handleForm}>
         <Form.Group className="mb-3">
-          <Form.Label>User1</Form.Label>
-          <Form.Control type="text" placeholder="User 1" value={user1} onChange={(e) => setUser1(e.target.value)} />
-          <Form.Label>User2</Form.Label>
-          <Form.Control type="text" placeholder="User 2" value={user2} onChange={(e) => setUser2(e.target.value)} />
+          <Form.Control className="mb-3" type="text" placeholder="User 1" value={user1} onChange={(e) => setUser1(e.target.value)} />
+          <Form.Control className="mb-3" type="text" placeholder="User 2" value={user2} onChange={(e) => setUser2(e.target.value)} />
         </Form.Group>
         <Button variant="primary" type="submit" >
           Submit
@@ -50,9 +48,13 @@ function App() {
       
       {loaderFlag && <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>}
 
+      <Container>
       <div className="card-container">
         {userCards}
       </div>
+
+      </Container>
+      
       
       
     </div>

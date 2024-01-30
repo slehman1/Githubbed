@@ -21,11 +21,13 @@ function RepoStats() {
   const [loaderFlag, setLoaderFlag] = React.useState(false)
   const [wrongUsernameFlag, setWrongUsernameFlag] = React.useState(false)
   const [noReposFlag, setNoReposFlag] = React.useState(false)
-  
+  const [displayRepoOptionsFlag, setDisplayRepoOptionsFlag] = React.useState(false)
+  const [displayDataFlag, setDisplayDataFlag] = React.useState(false)
 
   const debounceOnChange = React.useCallback(debounce(onChange, 800), []);
 
   async function onChange(value) {
+    
     setWrongUsernameFlag(false)
     setNoReposFlag(false)
     const body = {user1: value}
@@ -47,6 +49,7 @@ function RepoStats() {
   ))
     setRepoSelector(newRepoSelector)
     setLoaderFlag(false)
+    setDisplayRepoOptionsFlag(true)
   }
 
 
@@ -69,9 +72,14 @@ function RepoStats() {
     setRepoInfo(newInfo)
     setOptionsState("None")
     setLoaderFlag(false)
+    setDisplayDataFlag(true)
   }
 
-
+  function handleChange(e){
+    setDisplayRepoOptionsFlag(false)
+    setDisplayDataFlag(false)
+    debounceOnChange(e.target.value)
+  }
 
 
 
@@ -84,13 +92,13 @@ function RepoStats() {
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Github Username</Form.Label>
-          <Form.Control type="text" placeholder="Username"  onChange={e => debounceOnChange(e.target.value)} />
+          <Form.Control type="text" placeholder="Username"  onChange={handleChange} />
         </Form.Group>
       </Form>
       {wrongUsernameFlag && <Alert variant="danger">Invalid username dummy!</Alert>}
       {noReposFlag && <Alert variant="danger">No repos for this username!</Alert>}
 
-      <Form onSubmit={handleRepoForm}>
+      {displayRepoOptionsFlag && <Form className="mb-3" onSubmit={handleRepoForm}>
         <Form.Group className="mb-3">
         <Form.Select value={optionsState} onChange={
               (e) => {setRepo(e.target.value)
@@ -101,7 +109,7 @@ function RepoStats() {
         </Form.Select>
         </Form.Group>
         <Button type="submit">Submit</Button>
-      </Form>
+      </Form>}
       
 
         <div>
@@ -109,8 +117,10 @@ function RepoStats() {
         {loaderFlag && <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>}
 
         </div>
-        <h2 id="repo-name-title">{repoName}</h2>
-      <div className="card-container">
+        {displayDataFlag && <Container>
+          <h2 id="repo-name-title">{repoName}</h2>
+          <div style={{border: "solid", borderRadius: "10px"}} className="card-container">
+      
         <div className="card-div">
         {repoPie}
         </div>
@@ -121,6 +131,7 @@ function RepoStats() {
         {repoInfo}
         </div>
       </div>
+      </Container>}
 
     </Container>
     </Row>

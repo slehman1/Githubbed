@@ -41,13 +41,11 @@ function Login(props) {
   return (
     <div >
       <h1>Login</h1>
-      <p>Pls login</p>
         <Form onSubmit={handleForm}>
         <Form.Group className="mb-3" >
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          <Form.Label>Password</Form.Label>
-          <Form.Control type={hidePassword ? "password" : "text"}  value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />{!hidePassword ? <Button type="button" onClick={() => setHidePassword(prevState => !prevState)}>Hide From The Ops</Button> : <Button type="button" onClick={() => setHidePassword(prevState => !prevState)}>No Ops Around</Button>}
+          <Form.Control className="mb-3" type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <Form.Control className="mb-3" type={hidePassword ? "password" : "text"}  value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+          <Form.Check checked={hidePassword ? true : false} style={{display: "inline"}} type="checkbox" onChange={() => setHidePassword(prevState => !prevState)}/><Form.Label style={{display: "inline"}}>Hide Password</Form.Label>
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit

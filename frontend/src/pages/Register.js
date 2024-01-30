@@ -49,16 +49,12 @@ function Register() {
   return (
     <div>
       <h1>Register</h1>
-      <p>Pls register</p>
       <Form onSubmit={handleForm}>
         <Form.Group className="mb-3">
-          <Form.Label>Username</Form.Label>
-          <Form.Control placeholder="Username" value={username} onChange={(e) => setUser1(e.target.value)} />
-          <Form.Label>Password</Form.Label>
-          <Form.Control type={hidePassword ? "password" : "text"}  placeholder="Password" value={password1} onChange={(e) => setPassword1(e.target.value)} />
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control type={hidePassword ? "password" : "text"} placeholder="Confirm Password" value={password2} onChange={(e) => setPassword2(e.target.value)}/>
-          {!hidePassword ? <Button type="button" onClick={() => setHidePassword(prevState => !prevState)}>Hide From The Ops</Button> : <Button type="button" onClick={() => setHidePassword(prevState => !prevState)}>No Ops Around</Button>}
+          <Form.Control className="mb-3" placeholder="Username" value={username} onChange={(e) => setUser1(e.target.value)} />
+          <Form.Control className="mb-3" type={hidePassword ? "password" : "text"}  placeholder="Password" value={password1} onChange={(e) => setPassword1(e.target.value)} />
+          <Form.Control className="mb-3" type={hidePassword ? "password" : "text"} placeholder="Confirm Password" value={password2} onChange={(e) => setPassword2(e.target.value)}/>
+          <Form.Check checked={hidePassword ? true : false} style={{display: "inline"}} type="checkbox" onChange={() => setHidePassword(prevState => !prevState)}/><Form.Label className="pl-3" style={{display: "inline"}}>Hide Password</Form.Label>
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit

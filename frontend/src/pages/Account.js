@@ -47,10 +47,9 @@ function Account(props) {
     <Container>
       <h1>Account</h1>
       <h2>Hello {usernameName}</h2>
-      <p>Lots of interesting information</p>
       {!isLoggedIn && <h2>Pls login dummy</h2>}
       <div className="card-container">
-      <div className="card-div">
+      <div  className="card-div">
       {card}
 
       </div>
