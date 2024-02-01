@@ -5,16 +5,18 @@ import PieChart from "./PieChart";
 
 
 function Card(props){
+    const data = props.data
     return (
         <div style={{borderStyle: "solid", textAlign: "center", borderRadius: "10px"}} className="card-div">
-            <h3>{props.user}</h3>
-            <p>Public Repos: {props.repos}</p>
-            <p>Total PR's: {props.prs}</p>
-            <p>Total Commits: {props.commits}</p>
-            <p>Stars Earned: {props.stars}</p>
-            <p>Total Bytes: {props.bytes}</p>
-            <p>Total Open Issues: {props.issues}</p>
-            <PieChart languages={props.languageDict} />
+            {/* <h3>{data.total.user}</h3> */}
+            <p>Public Repos: {data.total.repoCount}</p>
+            <p>Total Lines: {data.total.lines}</p>
+            <p>Total PR's: {data.total.prs}</p>
+            <p>Total Commits: {data.total.commits}</p>
+            <p>Stars Earned: {data.total.stars}</p>
+            
+            <p>Total Open Issues: {data.total.openIssues}</p>
+            <PieChart languages={data.total.languageDict} />
         </div>
     )
 }

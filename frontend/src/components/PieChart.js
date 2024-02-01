@@ -1,5 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import {Col} from "react-bootstrap"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -41,7 +42,12 @@ function PieChart(props) {
           },
         ],
     };
-  return <Pie data={data} />;
+  return (
+  <Col>
+  {props.displayUser ? <h3>{props.user}</h3> : null}
+  <Pie data={data}/>
+  </Col>
+  );
 }
 
 export default PieChart;

@@ -1,16 +1,20 @@
 import React from "react"
 import axios from "axios"
-import Card from "../components/Card"
+import CompareTable from "../components/CompareTable"
+import PieChart from "../components/PieChart"
 
 //bootstrap imports
-import {Spinner, Form, Button, Container} from "react-bootstrap"
+import {Spinner, Form, Button, Container, Row, Col} from "react-bootstrap"
 
-function App() {
+function Compare() {
 
   const [user1, setUser1] = React.useState("")
   const [user2, setUser2] = React.useState("")
-  const [userCards, setUserCards] = React.useState()
+  const [dataTables, setDataTables] = React.useState()
+  const [recentDataTables, setRecentDataTables] = React.useState()
+  const [languagePies, setLanguagePies] = React.useState()
   const [loaderFlag, setLoaderFlag] = React.useState(false)
+  const [displayFlag, setDisplayFlag] = React.useState(false)
 
 
   async function handleForm(e){
@@ -18,12 +22,18 @@ function App() {
     setLoaderFlag(true)
     const body = {user1: user1, user2: user2}
     const response = await axios.post("https://githubber-backend.vercel.app/compare", body)
-    // const {user1Repos, user2Repos} = response.data
-    console.log(response.data)
-    const cards = response.data.map((userData, index) => (<Card key={index} prs={userData.prs} commits={userData.commits} stars={userData.stars} languageDict={userData.languageDict} user={userData.user} repos={userData.repoCount} bytes={userData.totalBytes} issues={userData.openIssues}/>))
-    console.log(cards)
-    setUserCards(cards)
+    const responseData = response.data
+    console.log(responseData)
+    const tables = <CompareTable data={responseData} />
+    setDataTables(tables)
+    const recentTable = <CompareTable data={responseData} recent={true}/>
+    setRecentDataTables(recentTable)
+    const pies = response.data.map((user, index) => (<PieChart key={index} displayUser={true} user={user.total.user} languages={user.total.languageDict} />))
+    setLanguagePies(pies)
+
+    
     setLoaderFlag(false)
+    setDisplayFlag(true)
 
     
   }
@@ -34,8 +44,8 @@ function App() {
 
   return (
     <div>
-      <h1>Compare</h1>
-      <p>Pls input two valid Github users to compare stats</p>
+      <h1>CompareToo</h1>
+      <p>Input two Github usernames to compare stats</p>
       <Form onSubmit={handleForm}>
         <Form.Group className="mb-3">
           <Form.Control className="mb-3" type="text" placeholder="User 1" value={user1} onChange={(e) => setUser1(e.target.value)} />
@@ -48,12 +58,38 @@ function App() {
       
       {loaderFlag && <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>}
 
-      <Container>
+    
+      <Container style={{textAlign: "center"}}>
+      <Row>
+      <Col>
+      {displayFlag && <h2>Total Activity</h2>}
       <div className="card-container">
-        {userCards}
+        {dataTables}
+      </div>
+      </Col>
+      
+      <Col>
+      {displayFlag && <h2>Recent Activity (3m)</h2>}
+      <div className="card-container">
+        {recentDataTables}
       </div>
 
+      </Col>
+      
+
+      </Row>
+      <Row>
+      {languagePies}
+      
+
+      </Row>
+      
+      
+      
+
       </Container>
+        
+      
       
       
       
@@ -61,4 +97,4 @@ function App() {
   );
 }
 
-export default App;
+export default Compare;

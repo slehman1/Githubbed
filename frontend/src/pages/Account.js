@@ -28,7 +28,8 @@ function Account(props) {
         const body = {username: username}
         const response = await axios.post("https://githubber-backend.vercel.app/user", body)
         const userData = response.data
-        const newCard = <Card prs={userData.prs} commits={userData.commits} stars={userData.stars} languageDict={userData.languageDict} user={userData.user} repos={userData.repoCount} bytes={userData.totalBytes} issues={userData.openIssues}/>
+        console.log(userData)
+        const newCard = <Card data={userData}/>
         setCard(newCard)
         setLoaderFlag(false)
       } else {
