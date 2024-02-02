@@ -8,7 +8,7 @@ import {Spinner, Container} from "react-bootstrap"
 
 //vercel: https://githubber-backend.vercel.app
 
-function Account(props) {
+function Account() {
 
   
   const [card, setCard] = React.useState()
@@ -26,7 +26,7 @@ function Account(props) {
       if (username) {
         setLoaderFlag(true)
         const body = {username: username}
-        const response = await axios.post("https://githubber-backend.vercel.app/user", body)
+        const response = await axios.post("http://localhost:8080/user", body)
         const userData = response.data
         console.log(userData)
         const newCard = <Card data={userData}/>

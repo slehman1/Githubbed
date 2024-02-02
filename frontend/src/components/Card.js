@@ -6,6 +6,8 @@ import PieChart from "./PieChart";
 
 function Card(props){
     const data = props.data
+    console.log(data)
+    console.log("here")
     return (
         <div style={{borderStyle: "solid", textAlign: "center", borderRadius: "10px"}} className="card-div">
             {/* <h3>{data.total.user}</h3> */}

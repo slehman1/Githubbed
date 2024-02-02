@@ -33,7 +33,7 @@ function RepoStats() {
     const body = {user1: value}
     setUser1(value)
     setLoaderFlag(true)
-    const response = await axios.post("https://githubber-backend.vercel.app/repos", body)
+    const response = await axios.post("http://localhost:8080/repos", body)
     if (response.data === "Error") {
       setWrongUsernameFlag(true)
       setLoaderFlag(false)
@@ -43,7 +43,6 @@ function RepoStats() {
       setLoaderFlag(false)
       return
     }
-    console.log(response.data)
     const newRepoSelector = response.data.map((repo, index) => (
       <option key={index} value={repo}>{repo}</option>
   ))
@@ -61,13 +60,13 @@ function RepoStats() {
       return
     }
     setLoaderFlag(true)
-    const response = await axios.post("https://githubber-backend.vercel.app/repoInfo", body)
+    const response = await axios.post("http://localhost:8080/repoInfo", body)
     setRepoName(repo)
     setRepoPie(<PieChart languages={response.data.languages} />)
     setRepoLineChart(<LineChart lines={response.data.lineNums} />)
     const newInfoKeys = Object.keys(response.data.info)
-    const newInfo = newInfoKeys.map((key) => (
-        <p>{key}: {response.data.info[key]}</p>
+    const newInfo = newInfoKeys.map((key, index) => (
+        <p key={index}>{key}: {response.data.info[key]}</p>
     ))
     setRepoInfo(newInfo)
     setOptionsState("None")
@@ -76,6 +75,7 @@ function RepoStats() {
   }
 
   function handleChange(e){
+    e.preventDefault()
     setDisplayRepoOptionsFlag(false)
     setDisplayDataFlag(false)
     debounceOnChange(e.target.value)
@@ -89,7 +89,7 @@ function RepoStats() {
       <h1>Repo Stats</h1>
       <p>Pls input a user to see public repos</p>
 
-      <Form>
+      <Form onSubmit={(e) => e.preventDefault()}>
         <Form.Group className="mb-3">
           <Form.Label>Github Username</Form.Label>
           <Form.Control type="text" placeholder="Username"  onChange={handleChange} />
@@ -104,7 +104,7 @@ function RepoStats() {
               (e) => {setRepo(e.target.value)
               setOptionsState(e.target.value)}}
                name="repo">
-                <option value="None">None</option>
+                <option defaultValue={true} hidden value="None">Select a Repo</option>
                 {repoSelector}
         </Form.Select>
         </Form.Group>

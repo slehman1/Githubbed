@@ -21,7 +21,7 @@ function Compare() {
     e.preventDefault()
     setLoaderFlag(true)
     const body = {user1: user1, user2: user2}
-    const response = await axios.post("https://githubber-backend.vercel.app/compare", body)
+    const response = await axios.post("http://localhost:8080/compare", body)
     const responseData = response.data
     console.log(responseData)
     const tables = <CompareTable data={responseData} />
@@ -44,7 +44,7 @@ function Compare() {
 
   return (
     <div>
-      <h1>CompareToo</h1>
+      <h1>Compare</h1>
       <p>Input two Github usernames to compare stats</p>
       <Form onSubmit={handleForm}>
         <Form.Group className="mb-3">
