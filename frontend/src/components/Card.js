@@ -6,19 +6,25 @@ import PieChart from "./PieChart";
 
 function Card(props){
     const data = props.data
-    console.log(data)
-    console.log("here")
+
+    function onDragStart(event) {
+        event
+          .dataTransfer
+          .setData('text/plain', event.target.id);
+      }
+
+    
     return (
-        <div style={{borderStyle: "solid", textAlign: "center", borderRadius: "10px"}} className="card-div">
-            {/* <h3>{data.total.user}</h3> */}
-            <p>Public Repos: {data.total.repoCount}</p>
-            <p>Total Lines: {data.total.lines}</p>
-            <p>Total PR's: {data.total.prs}</p>
-            <p>Total Commits: {data.total.commits}</p>
-            <p>Stars Earned: {data.total.stars}</p>
+        <div id="card" onDragStart={(e) => onDragStart(e)} draggable={true} style={{borderStyle: "solid", textAlign: "center", borderRadius: "10px", display: props.display}} className="card-div">
+            {props.metrics && <h2>Metrics</h2>}
+            <h5>Public Repos: {data.total.repoCount}</h5>
+            <h5>Total Lines: {data.total.lines}</h5>
+            <h5>Total PR's: {data.total.prs}</h5>
+            <h5>Total Commits: {data.total.commits}</h5>
+            <h5>Stars Earned: {data.total.stars}</h5>
             
-            <p>Total Open Issues: {data.total.openIssues}</p>
-            <PieChart languages={data.total.languageDict} />
+            <h5>Total Open Issues: {data.total.openIssues}</h5>
+            {props.displayPie && <PieChart languages={data.total.languageDict} />}
         </div>
     )
 }

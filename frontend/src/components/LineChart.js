@@ -36,8 +36,9 @@ function LineChart(props) {
           },
         },
       };
-      
-      const labels = ['', '', '', '', '', '', ''];
+      console.log(props.lines)
+      const labels = props.lines.map((lines) => '')
+      // const labels = ['', '', '', ''];
 
     const data = {
         labels,

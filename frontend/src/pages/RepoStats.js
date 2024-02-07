@@ -33,7 +33,7 @@ function RepoStats() {
     const body = {user1: value}
     setUser1(value)
     setLoaderFlag(true)
-    const response = await axios.post("http://localhost:8080/repos", body)
+    const response = await axios.post("https://githubber-backend.vercel.app/repos", body)
     if (response.data === "Error") {
       setWrongUsernameFlag(true)
       setLoaderFlag(false)
@@ -60,13 +60,16 @@ function RepoStats() {
       return
     }
     setLoaderFlag(true)
-    const response = await axios.post("http://localhost:8080/repoInfo", body)
+    // const response = await axios.post("https://githubber-backend.vercel.app/repoInfo", body)
+    const response = await graphql()
+    console.log("responsebleow")
+    console.log(response)
     setRepoName(repo)
-    setRepoPie(<PieChart languages={response.data.languages} />)
-    setRepoLineChart(<LineChart lines={response.data.lineNums} />)
-    const newInfoKeys = Object.keys(response.data.info)
+    setRepoPie(<PieChart languages={response.languages} />)
+    setRepoLineChart(<LineChart lines={response.lineNums} />)
+    const newInfoKeys = Object.keys(response.info)
     const newInfo = newInfoKeys.map((key, index) => (
-        <p key={index}>{key}: {response.data.info[key]}</p>
+        <p key={index}>{key}: {response.info[key]}</p>
     ))
     setRepoInfo(newInfo)
     setOptionsState("None")
@@ -80,6 +83,119 @@ function RepoStats() {
     setDisplayDataFlag(false)
     debounceOnChange(e.target.value)
   }
+
+  const githubAPIEndpoint = 'https://api.github.com/graphql'
+
+const headers = {
+    "Content-Type" : "application/json",
+    Authorization: "bearer " + process.env.REACT_APP_AUTH_KEY
+}
+
+  async function graphql(){
+
+    //get bytes per language and repo info and line counts
+    return fetch(githubAPIEndpoint, {
+        method: "POST", 
+        headers: headers,
+        body: JSON.stringify({
+            query: `
+            query getRepoInfo($username: String!, $repo: String!) {
+                user(login: $username){
+                  repository(name: $repo){
+                    forkCount
+                    stargazerCount
+                    issues{
+                      totalCount
+                    }
+                        languages(first: 100){
+                      totalSize
+                      edges{
+                        node{
+                          name
+                        }
+                        size
+                      }
+                    }
+                    defaultBranchRef{
+                        target{
+                          ... on Commit {
+                            history {
+                              totalCount
+                              nodes{
+                                committedDate
+                                additions
+                                deletions
+                              }
+                            }
+                          }
+                        }
+                      }
+                      
+                    }
+                  }
+                }
+            `,
+            variables: {"username": user1, repo: repo} 
+        })})
+        .then(res =>  res.json())
+        .then(data => {
+          
+            const repository = data.data.user.repository
+            //package to send
+            const repoInfo = {
+                forks: repository.forkCount,
+                stars: repository.stargazerCount,
+                openIssues: repository.issues.totalCount,
+            }
+            const repoLanguageDict = {}
+            repository.languages.edges.forEach((language) => {
+                repoLanguageDict[language.node.name] = language.size
+            })
+            //get lines
+            const threeMonths = 3 * 30 * 24 * 60 * 60 * 1000 
+            const threeMonthRange = Date.now() - threeMonths
+            const linesRes = linesHelper(repository.defaultBranchRef, threeMonthRange)
+            const resData = {
+            languages: repoLanguageDict,
+            lineNums: linesRes.linesArray,
+            info: repoInfo
+            }
+            
+            return resData
+            
+        })
+        .catch(err => console.log(err))
+  }
+
+  function linesHelper(data, rangeDate){
+    //get all commmits and then get lines added and deleted per commit
+    //return an array of the lines over time as well as a total line number for the repo that is recent
+    const commits = data.target.history.nodes
+    const linesArray = []
+    var recentLines = 0
+    var z = 0
+    for (let i = commits.length - 1; i > -1; i--){
+        z += 1
+        const currCommit = commits[i]
+        const change = currCommit.additions - currCommit.deletions
+        
+        const commitDate = new Date(currCommit.committedDate).getTime()
+        if (commitDate > rangeDate) {
+            recentLines += change
+        }
+        if (i === commits.length - 1){
+            linesArray.push(change)
+        } else {
+            linesArray.push(change + linesArray[z - 2])
+        }
+    }
+    const returnObj = {
+        linesArray: linesArray,
+        recentLines: recentLines
+    }
+    return returnObj
+
+}
 
 
 

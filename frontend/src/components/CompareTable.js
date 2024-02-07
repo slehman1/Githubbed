@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 function CompareTable(props){
 
     const data = props.data
-    console.log(data)
+    
     let foo;
 
     if (props.recent){

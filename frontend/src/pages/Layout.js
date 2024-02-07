@@ -36,6 +36,7 @@ function Layout(props) {
           {loggedIn && <Link className="m-2" to="/logout">Logout</Link>}
             <Link className="m-2" to="/register">Register</Link>
             <Link className="m-2" to="/account">Account</Link>
+            <Link className="m-2" to="/foryou">ForYou</Link>
             <Link className="m-2" to="/compare">Compare</Link>
             <Link className="m-2" to="/repoStats">Repo Stats</Link>
           </Nav>
